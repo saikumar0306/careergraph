@@ -20,11 +20,11 @@
 [x] Missing skills query returns meaningful gaps for a realistic person-role example
 
 ## Stage 4 — Backend
-[ ] Job APIs
-[ ] Skill APIs
-[ ] Career match API
-[ ] Missing skills API
-[ ] Graph exploration API
+[x] Job APIs
+[x] Skill APIs
+[x] Career match API
+[x] Missing skills API
+[x] Graph exploration API
 
 ## Stage 5 — Frontend
 [ ] React setup
