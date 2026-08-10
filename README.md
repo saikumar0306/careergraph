@@ -238,10 +238,17 @@ Then open `http://127.0.0.1:3000` in your browser.
 
 ## Screenshots
 
-- Dashboard: _placeholder for screenshot_
-- Job Explorer: _placeholder for screenshot_
-- Career Match: _placeholder for screenshot_
-- Graph Explorer: _placeholder for screenshot_
+![Dashboard](scripts/docs/screenshots/dashboard.jpg)
+*Dashboard*
+
+![Job Explorer](scripts/docs/screenshots/job-explorer.jpg)
+*Job Explorer*
+
+![Career Match — Maya Singh → Data Scientist](scripts/docs/screenshots/career-match.jpg)
+*Career Match — Maya Singh → Data Scientist*
+
+![Graph Explorer — Python connections](scripts/docs/screenshots/graph-explorer.jpg)
+*Graph Explorer — Python connections*
 
 ## Demo
 
