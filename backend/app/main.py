@@ -3,10 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 try:
-    from backend.database.connection import check_db_connection
+    from backend.database.connection import check_db_connection, get_env_presence
     from backend.app.routes.graph_routes import router as graph_router
 except ModuleNotFoundError:  # pragma: no cover - supports running app from backend directory
-    from database.connection import check_db_connection
+    from database.connection import check_db_connection, get_env_presence
     from app.routes.graph_routes import router as graph_router
 
 app = FastAPI(title="CareerGraph API", version="0.1.0")
@@ -36,10 +36,14 @@ def read_root():
 
 @app.get("/health/db")
 def health_db():
+    env_presence = get_env_presence()
     try:
         if check_db_connection():
-            return {"database": "connected", "status": "ok"}
+            return {"database": "connected", "status": "ok", "env_present": env_presence}
     except Exception:
         pass
 
-    return JSONResponse(status_code=503, content={"database": "unavailable", "status": "error"})
+    return JSONResponse(
+        status_code=503,
+        content={"database": "unavailable", "status": "error", "env_present": env_presence},
+    )
