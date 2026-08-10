@@ -1,13 +1,37 @@
 import { useEffect, useState } from 'react';
-import { getSkillConnections } from '../services/api';
+import { getSkillConnections, getSkills } from '../services/api';
 
 export default function GraphExplorer() {
-  const [skillId, setSkillId] = useState('skill:python');
+  const [skills, setSkills] = useState([]);
+  const [skillId, setSkillId] = useState('');
   const [connections, setConnections] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
+    async function loadSkills() {
+      try {
+        setLoading(true);
+        setError('');
+        const response = await getSkills();
+        const availableSkills = response.skills || [];
+        setSkills(availableSkills);
+        if (availableSkills.length > 0) {
+          setSkillId(availableSkills[0].id);
+        }
+      } catch (err) {
+        setError(err.message || 'Unable to load skills.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadSkills();
+  }, []);
+
+  useEffect(() => {
+    if (!skillId) return;
+
     async function loadConnections() {
       try {
         setLoading(true);
@@ -20,6 +44,7 @@ export default function GraphExplorer() {
         setLoading(false);
       }
     }
+
     loadConnections();
   }, [skillId]);
 
@@ -32,10 +57,15 @@ export default function GraphExplorer() {
         <label className="mt-6 block text-sm font-medium text-slate-200">
           Skill
           <select value={skillId} onChange={(event) => setSkillId(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-cyan-500">
-            <option value="skill:python">Python</option>
-            <option value="skill:sql">SQL</option>
-            <option value="skill:pytorch">PyTorch</option>
-            <option value="skill:statistics">Statistics</option>
+            {skills.length === 0 ? (
+              <option value="">Loading skill list...</option>
+            ) : (
+              skills.map((skill) => (
+                <option key={skill.id} value={skill.id}>
+                  {skill.name}
+                </option>
+              ))
+            )}
           </select>
         </label>
       </section>

@@ -34,11 +34,11 @@
 [x] Graph Explorer
 
 ## Stage 6 — Polish
-[ ] Loading states
-[ ] Empty states
-[ ] Error states
-[ ] Responsive UI
-[ ] Final testing
+[x] Loading states
+[x] Empty states
+[x] Error states
+[x] Responsive UI
+[x] Final testing
 
 ## Stage 7 — Submission
 [ ] GitHub

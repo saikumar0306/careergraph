@@ -162,3 +162,12 @@ def get_skill_connections(skill_id: str) -> dict[str, Any]:
         "job_roles": [job for job in job_roles[0]["job_roles"] if job["id"] is not None],
         "technologies": [tech for tech in technologies[0]["technologies"] if tech["id"] is not None],
     }
+
+
+def list_skills() -> list[dict[str, Any]]:
+    query = """
+    MATCH (s:Skill)
+    RETURN s.id AS id, s.name AS name, s.category AS category
+    ORDER BY s.name
+    """
+    return _run_query(query)

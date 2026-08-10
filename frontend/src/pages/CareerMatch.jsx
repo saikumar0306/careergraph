@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getMissingSkills, getPeople, getPersonMatches } from '../services/api';
+import { getJobs, getMissingSkills, getPeople, getPersonMatches } from '../services/api';
 
 export default function CareerMatch() {
   const [people, setPeople] = useState([]);
-  const [personId, setPersonId] = useState('person:maya');
-  const [jobId, setJobId] = useState('jobrole:data-scientist');
+  const [jobs, setJobs] = useState([]);
+  const [personId, setPersonId] = useState('');
+  const [jobId, setJobId] = useState('');
   const [matches, setMatches] = useState([]);
   const [missingSkills, setMissingSkills] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,24 +13,36 @@ export default function CareerMatch() {
   const [matchSummary, setMatchSummary] = useState(null);
 
   useEffect(() => {
-    async function loadPeople() {
+    async function loadPeopleAndJobs() {
       try {
-        const response = await getPeople();
-        const loadedPeople = response.people || [];
+        setLoading(true);
+        setError('');
+        const [peopleResponse, jobsResponse] = await Promise.all([getPeople(), getJobs()]);
+        const loadedPeople = peopleResponse.people || [];
+        const loadedJobs = jobsResponse.jobs || [];
+
         setPeople(loadedPeople);
-        if (!loadedPeople.some((person) => person.id === personId)) {
-          setPersonId(loadedPeople[0]?.id || 'person:maya');
+        setJobs(loadedJobs);
+
+        if (!personId && loadedPeople.length > 0) {
+          setPersonId(loadedPeople[0].id);
+        }
+
+        if (!jobId && loadedJobs.length > 0) {
+          setJobId(loadedJobs[0].id);
         }
       } catch (err) {
-        setError(err.message || 'Unable to load people.');
+        setError(err.message || 'Unable to load people and jobs.');
+      } finally {
+        setLoading(false);
       }
     }
 
-    loadPeople();
-  }, [personId]);
+    loadPeopleAndJobs();
+  }, []);
 
   useEffect(() => {
-    if (!personId) return;
+    if (!personId || !jobId) return;
 
     async function loadMatchData() {
       try {
@@ -41,6 +54,7 @@ export default function CareerMatch() {
         ]);
         const matchItems = matchesResponse.matches || [];
         const selectedMatch = matchItems.find((item) => item.id === jobId) || matchItems[0] || null;
+
         setMatches(matchItems);
         setMatchSummary(selectedMatch);
         setMissingSkills(missingResponse.missing_skills || []);
@@ -55,6 +69,7 @@ export default function CareerMatch() {
   }, [personId, jobId]);
 
   const activePerson = useMemo(() => people.find((person) => person.id === personId) || null, [people, personId]);
+  const activeJob = useMemo(() => jobs.find((job) => job.id === jobId) || null, [jobs, jobId]);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
@@ -65,7 +80,11 @@ export default function CareerMatch() {
         <div className="mt-6 space-y-4">
           <label className="block text-sm font-medium text-slate-200">
             Person
-            <select value={personId} onChange={(event) => setPersonId(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-cyan-500">
+            <select
+              value={personId}
+              onChange={(event) => setPersonId(event.target.value)}
+              className="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-cyan-500"
+            >
               {people.map((person) => (
                 <option key={person.id} value={person.id}>
                   {person.name} ({person.title})
@@ -76,11 +95,16 @@ export default function CareerMatch() {
 
           <label className="block text-sm font-medium text-slate-200">
             Job Role
-            <select value={jobId} onChange={(event) => setJobId(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-cyan-500">
-              <option value="jobrole:data-scientist">Data Scientist</option>
-              <option value="jobrole:backend-engineer">Backend Engineer</option>
-              <option value="jobrole:software-engineer">Software Engineer</option>
-              <option value="jobrole:ml-engineer">Machine Learning Engineer</option>
+            <select
+              value={jobId}
+              onChange={(event) => setJobId(event.target.value)}
+              className="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-cyan-500"
+            >
+              {jobs.map((job) => (
+                <option key={job.id} value={job.id}>
+                  {job.name}
+                </option>
+              ))}
             </select>
           </label>
         </div>
@@ -96,7 +120,7 @@ export default function CareerMatch() {
             <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
               <p className="text-sm text-slate-400">Selected Profile</p>
               <h3 className="mt-1 text-xl font-semibold text-white">{activePerson?.name || personId}</h3>
-              <p className="mt-2 text-sm text-slate-300">Target role: {jobId === 'jobrole:data-scientist' ? 'Data Scientist' : 'Selected role'}</p>
+              <p className="mt-2 text-sm text-slate-300">Target role: {activeJob?.name || jobId}</p>
             </div>
 
             <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
@@ -107,16 +131,16 @@ export default function CareerMatch() {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
-                <h4 className="font-semibold text-white">Your Skills</h4>
-                <div className="mt-3 flex flex-wrap gap-2">
+                <h4 className="font-semibold text-white">Top matching roles</h4>
+                <div className="mt-3 space-y-2">
                   {matches.length > 0 ? (
                     matches.slice(0, 4).map((match) => (
-                      <span key={match.id} className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300">
-                        ✓ {match.name}
-                      </span>
+                      <div key={match.id} className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
+                        {match.name} — {match.match_percentage?.toFixed(0)}%
+                      </div>
                     ))
                   ) : (
-                    <p className="text-sm text-slate-400">No matching skills returned.</p>
+                    <p className="text-sm text-slate-400">No related roles returned.</p>
                   )}
                 </div>
               </div>

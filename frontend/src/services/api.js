@@ -30,6 +30,10 @@ export async function getPeople() {
   return request('/api/people');
 }
 
+export async function getSkills() {
+  return request('/api/skills');
+}
+
 export async function getPersonMatches(personId) {
   return request(`/api/people/${encodeURIComponent(personId)}/matches`);
 }

@@ -15,6 +15,7 @@ try:
         get_skill_connections,
         list_jobs,
         list_people,
+        list_skills,
     )
 except ModuleNotFoundError:  # pragma: no cover - supports running app from backend directory
     from app.services.graph_service import (
@@ -29,6 +30,7 @@ except ModuleNotFoundError:  # pragma: no cover - supports running app from back
         get_skill_connections,
         list_jobs,
         list_people,
+        list_skills,
     )
 
 router = APIRouter(prefix="/api", tags=["careergraph"])
@@ -66,6 +68,14 @@ def read_job_skills(job_id: str):
 def read_people():
     try:
         return {"people": list_people()}
+    except GraphServiceError as exc:
+        raise _handle_service_error(exc)
+
+
+@router.get("/skills")
+def read_skills():
+    try:
+        return {"skills": list_skills()}
     except GraphServiceError as exc:
         raise _handle_service_error(exc)
 
