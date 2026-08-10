@@ -27,11 +27,11 @@
 [x] Graph exploration API
 
 ## Stage 5 — Frontend
-[ ] React setup
-[ ] Dashboard
-[ ] Job Explorer
-[ ] Career Match
-[ ] Graph Explorer
+[x] React setup
+[x] Dashboard
+[x] Job Explorer
+[x] Career Match
+[x] Graph Explorer
 
 ## Stage 6 — Polish
 [ ] Loading states

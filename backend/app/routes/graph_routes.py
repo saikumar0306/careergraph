@@ -2,19 +2,34 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException, status
 
-from app.services.graph_service import (
-    DatabaseUnavailableError,
-    GraphServiceError,
-    NotFoundError,
-    get_job,
-    get_job_skills,
-    get_missing_skills,
-    get_person_matches,
-    get_person_name,
-    get_skill_connections,
-    list_jobs,
-    list_people,
-)
+try:
+    from backend.app.services.graph_service import (
+        DatabaseUnavailableError,
+        GraphServiceError,
+        NotFoundError,
+        get_job,
+        get_job_skills,
+        get_missing_skills,
+        get_person_matches,
+        get_person_name,
+        get_skill_connections,
+        list_jobs,
+        list_people,
+    )
+except ModuleNotFoundError:  # pragma: no cover - supports running app from backend directory
+    from app.services.graph_service import (
+        DatabaseUnavailableError,
+        GraphServiceError,
+        NotFoundError,
+        get_job,
+        get_job_skills,
+        get_missing_skills,
+        get_person_matches,
+        get_person_name,
+        get_skill_connections,
+        list_jobs,
+        list_people,
+    )
 
 router = APIRouter(prefix="/api", tags=["careergraph"])
 
