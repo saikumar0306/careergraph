@@ -12,11 +12,12 @@
 [x] Database health check
 
 ## Stage 3 — Graph
-[ ] Graph schema
-[ ] Seed data
-[ ] Seed script
-[ ] Cypher queries
-[ ] Multi-hop query
+[x] Graph schema
+[x] Seed data
+[x] Seed script
+[x] Cypher queries
+[x] Multi-hop query
+[x] Missing skills query returns meaningful gaps for a realistic person-role example
 
 ## Stage 4 — Backend
 [ ] Job APIs
@@ -47,6 +48,3 @@
 [ ] Screenshots
 [ ] Screen recording
 [ ] Submit to Wexa
-
-## Stage 8 — Errors
-{"database":"unavailable","status":"error"}
