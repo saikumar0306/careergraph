@@ -276,3 +276,21 @@ Then open `http://127.0.0.1:3000` in your browser.
 ## Security Notes
 
 Credentials are loaded from environment variables and stored in `.env`. The `.env` file is excluded from Git in `.gitignore`, and frontend build output is ignored as well.
+
+
+## Live Demo
+
+Frontend:
+https://careergraph-yn92.onrender.com
+
+Backend API:
+https://careergraph-api.onrender.com
+
+API Endpoints:
+https://careergraph-api.onrender.com/api/jobs
+https://careergraph-api.onrender.com/api/people
+https://careergraph-api.onrender.com/api/skills
+
+## Screen Recording
+
+[Watch the 2–3 minute demo] (https://www.loom.com/share/f17cc2a8f13d43aea6d57d843a1378b8)
